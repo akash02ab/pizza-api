@@ -14,15 +14,18 @@ async function addPizza(name, price, ingredients) {
 }
 
 async function findPizza(query) {
+    console.log(query)
     try {
-        let pizzas = await PizzaModel.find(query);
+        let pizzas = await PizzaModel.find({'ingredients': {$all: query['ingredients'].split(',')}});
         return pizzas;
     }
     catch(err) {
+        console.log(err)
         return {'error': err};
     }
 }
 
 module.exports = {
     findPizza,
+    addPizza
 }

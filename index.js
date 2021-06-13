@@ -1,10 +1,10 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const url = require('url');
-const querystring = require('querystring');
 
 const {findPizza} = require("./controllers/pizzaController");
+const {getOrderItems} = require("./controllers/orderItemsController");
+const {getAllOrders} = require("./controllers/orderController");
 
 mongoose.connect('mongodb://127.0.0.1:27017/pizzeria', {
     useNewUrlParser: true,
@@ -14,19 +14,18 @@ mongoose.connect('mongodb://127.0.0.1:27017/pizzeria', {
 const app = express();
 app.use(morgan('dev'));
 
-app.get('/orders', (req, res) => {
-
+app.get('/orders', async (req, res) => {
+    let response = await getAllOrders();
+    res.json(response);
 });
 
-app.get('/orders/:id', (req, res) => {
-
+app.get('/orders/:id', async (req, res) => {
+    let response = await getOrderItems(req.params.id);
+    res.json(response);
 });
 
 app.get('/pizzas', async (req, res) => {
-    let parsedUrl = url.parse(req.url);
-    let parsedQs = querystring.parse(parsedUrl.query);
-    console.log(parsedQs)
-    let response = await findPizza(parsedQs);
+    let response = await findPizza(req.query);
     res.json(response);
 });
 
